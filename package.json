@@ -1,6 +1,6 @@
 {
   "name": "scrapeteer",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "A web scraper based on puppeteer.",
   "main": "index.js",
   "scripts": {
