@@ -15,7 +15,7 @@ npm install scrapeteer
 Scrapeteer will extract data from an web-page using an array of objects where which one will represent rules of how to fetch and store data in the returning object.
 
 ```javascript
-import Scrapeteer from 'scrapeter'
+import Scrapeteer from 'scrapeteer'
 
 const defaultTagsConfig = [
   {
