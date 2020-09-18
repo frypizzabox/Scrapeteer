@@ -41,7 +41,7 @@ const onRequestTagsConfig = [
 const scrapeteer = new Scrapeteer(defaultTagsConfig)
 
 ;(async () => {
-  await scrapeteer.start()
+  await scrapeteer.launch()
 
   const withDefault = await scrapeteer.extractFromUrl('http://amazon.com')
   const withOnRequest = await scrapeteer.extractFromUrl('http://amazon.com', onRequestTagsConfig)
