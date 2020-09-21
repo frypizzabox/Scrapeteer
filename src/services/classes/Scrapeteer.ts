@@ -3,58 +3,93 @@ import { selector, extraction } from '../types'
 import { Resources } from '../enums'
 
 export class Scrapeteer {
-  protected defaultSelector: selector[]
-  protected notLoad: Resources[]
+  protected defaultSelectors: selector[]
+  protected defaultSkipResources: Resources[]
   protected browser: any
   protected page: any
 
   constructor(
-    querySelector: selector[] = [],
-    notLoad: Resources[] = [Resources.image, Resources.stylesheet, Resources.font, Resources.script]
+    defaultSelectors: selector[] = [],
+    defaultSkipResources: Resources[] = [
+      Resources.image,
+      Resources.stylesheet,
+      Resources.font,
+      Resources.script,
+    ]
   ) {
-    this.defaultSelector = querySelector
-    this.notLoad = notLoad
+    this.defaultSelectors = defaultSelectors
+    this.defaultSkipResources = defaultSkipResources
   }
 
+  setDefaultSelector(defaultSelector: selector[]) {
+    this.defaultSelectors = defaultSelector
+  }
+
+  setDefaultSkipResources(
+    defaultSkipResources: Resources[] = [
+      Resources.image,
+      Resources.stylesheet,
+      Resources.font,
+      Resources.script,
+    ]
+  ) {
+    this.defaultSkipResources = defaultSkipResources
+  }
+
+  /**
+   * Initiates Puppeteer
+   */
   async launch(): Promise<void> {
     this.browser = await puppeteer.launch()
   }
 
-  setDefaultSelector(defaultSelector: selector[]) {
-    this.defaultSelector = defaultSelector
-  }
-
+  /**
+   * Extract data from a URL
+   *
+   * @param url - The URL to be extracted
+   * @param selectors - Rules of how data should be extracted
+   * @param skipResourcers - Page resources to avoid request
+   */
   async extractFromUrl(
     url: string,
-    selectorList: selector[] = this.defaultSelector
+    selectors: selector[] = this.defaultSelectors,
+    skipResourcers: Resources[] = this.defaultSkipResources
   ): Promise<extraction> {
-    if (!selectorList.length) return {}
+    // no selectors means nothing will be done
+    if (!selectors.length) return {}
 
     const page = await this.browser.newPage()
 
     await page.setRequestInterception(true)
 
+    // handles the request abortion of any resource in skipResourcers
     page.on('request', (request: any) => {
-      if (this.notLoad.indexOf(request.resourceType()) !== -1) request.abort()
+      if (skipResourcers.indexOf(request.resourceType()) !== -1) request.abort()
       else request.continue()
     })
 
     await page.goto(url)
 
     try {
+      // uses evaluate from Puppeteer to inject a function
       const data = await page.evaluate(
         (selectorList: selector[]) =>
+          // for every selector in the list
           selectorList.reduce((acc: extraction, selector: selector) => {
+            // if there's a saveAs creates a empty array
             if (!acc.hasOwnProperty(selector.saveAs)) acc[selector.saveAs] = []
+            // Do a querySelectorAll and for each return...
             document.querySelectorAll(selector.query).forEach((tag: any) => {
+              // ...get every attribute to be fetched...
               selector.attrsToFetch.forEach((attr: string) =>
+                // ...stores in the return array as a string
                 acc[selector.saveAs].push(tag[attr]?.trim())
               )
             })
 
             return acc
           }, {}),
-        selectorList
+        selectors
       )
 
       page.close()
