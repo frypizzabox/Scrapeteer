@@ -15,15 +15,15 @@ npm install scrapeteer
 Scrapeteer will extract data from an web-page using an array of objects where which one will represent rules of how to fetch and store data in the returning object.
 
 ```javascript
-import Scrapeteer from 'scrapeteer'
+import Scrapeteer from 'scrapeteer';
 
 const defaultTagsConfig = [
   {
     saveAs: 'title',
-    query: 'meta[name="og:title"], meta[property="og:title"]',
-    attrsToFetch: ['content'],
+    query: 'title',
+    attrsToFetch: ['innerHTML'],
   },
-]
+];
 
 const onRequestTagsConfig = [
   {
@@ -36,19 +36,22 @@ const onRequestTagsConfig = [
     query: 'meta[name="og:image"], meta[property="og:image"]',
     attrsToFetch: ['content'],
   },
-]
+];
 
-const scrapeteer = new Scrapeteer(defaultTagsConfig)
+const scrapeteer = new Scrapeteer(defaultTagsConfig);
 
-;(async () => {
-  await scrapeteer.launch()
+(async () => {
+  await scrapeteer.launch();
 
-  const withDefault = await scrapeteer.extractFromUrl('http://amazon.com')
-  const withOnRequest = await scrapeteer.extractFromUrl('http://amazon.com', onRequestTagsConfig)
+  const withDefault = await scrapeteer.extractFromUrl('http://amazon.com');
+  const withOnRequest = await scrapeteer.extractFromUrl(
+    'http://amazon.com',
+    onRequestTagsConfig
+  );
 
-  console.log('With default tags config: ', withDefault)
-  console.log('With OnRequest tags config: ', withOnRequest)
-})()
+  console.log('With default tags config: ', withDefault);
+  console.log('With OnRequest tags config: ', withOnRequest);
+})();
 ```
 
 To prepare Scrapeteer for use is necessary to follow a sequence of steps:
@@ -71,7 +74,7 @@ const tagsConfig = [
     query: 'meta[name="og:image"], meta[property="og:image"]',
     attrsToFetch: ['content'],
   },
-]
+];
 ```
 
 An object with tag rules are defined by three parameters:

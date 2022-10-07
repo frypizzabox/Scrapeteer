@@ -1,6 +1,6 @@
 {
   "name": "scrapeteer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A web scraper based on puppeteer.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,11 +29,11 @@
   },
   "homepage": "https://github.com/frypizzabox/Scrapeteer#readme",
   "dependencies": {
-    "puppeteer": "^5.2.1"
+    "puppeteer": "^18.2.1"
   },
   "devDependencies": {
-    "@types/node": "^14.6.0",
-    "@types/puppeteer": "^3.0.1",
-    "typescript": "^3.9.7"
+    "@types/node": "^18.8.3",
+    "@types/puppeteer": "^5.4.6",
+    "typescript": "^4.8.4"
   }
 }

@@ -1,12 +1,12 @@
-const Scrapeteer = require('./dist/index').default
+const Scrapeteer = require('./dist/index').default;
 
 const defaultTagsConfig = [
   {
     saveAs: 'title',
-    query: 'meta[name="og:title"], meta[property="og:title"]',
-    attrsToFetch: ['content'],
+    query: 'title',
+    attrsToFetch: ['innerHTML'],
   },
-]
+];
 
 const onRequestTagsConfig = [
   {
@@ -19,16 +19,19 @@ const onRequestTagsConfig = [
     query: 'meta[name="og:image"], meta[property="og:image"]',
     attrsToFetch: ['content'],
   },
-]
+];
 
-const scrapeteer = new Scrapeteer(defaultTagsConfig)
+const scrapeteer = new Scrapeteer(defaultTagsConfig);
 
-;(async () => {
-  await scrapeteer.launch()
+(async () => {
+  await scrapeteer.launch();
 
-  const withDefault = await scrapeteer.extractFromUrl('http://amazon.com')
-  const withOnRequest = await scrapeteer.extractFromUrl('http://amazon.com', onRequestTagsConfig)
+  const withDefault = await scrapeteer.extractFromUrl('https://amazon.com');
+  const withOnRequest = await scrapeteer.extractFromUrl(
+    'https://amazon.com',
+    onRequestTagsConfig
+  );
 
-  console.log('With default tags config: ', withDefault)
-  console.log('With OnRequest tags config: ', withOnRequest)
-})()
+  console.log('With default tags config: ', withDefault);
+  console.log('With OnRequest tags config: ', withOnRequest);
+})();
