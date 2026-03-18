@@ -12,7 +12,7 @@ npm install scrapeteer
 
 ## Usage
 
-Scrapeteer will extract data from an web-page using a array of objects where wich one will represent rules of how to fetch and store data in the returning object.
+Scrapeteer will extract data from an web-page using an array of objects where which one will represent rules of how to fetch and store data in the returning object.
 
 ```javascript
 import Scrapeteer from 'scrapeter'
@@ -54,8 +54,8 @@ const scrapeteer = new Scrapeteer(defaultTagsConfig)
 To prepare Scrapeteer for use is necessary to follow a sequence of steps:
 
 1. Load Scrapeteer Class.
-2. Instantiate it. Is possible to set pre-defined tag rules here, but is optional.
-3. Call the `async` method `.start()` witch will load puppeteer with pre-defined settings.
+2. Instantiate it. Is possible to set predefined tag rules here, but is optional.
+3. Call the `async` method `.start()` which will load puppeteer with optimized settings.
 
 ### Tags Config:
 
@@ -82,31 +82,31 @@ An object with tag rules are defined by three parameters:
 
 3. **attrsToFetch:** A array containing all the attributes to fetch from the html tags resulting from the query.
 
-Scrapeteer will use what's defined in query to fetch html tags, going one by one of the resulting list and get the value from each attribute requested in attrsToFetch. After that it will store everything that was found into an array of strings and save in the resulting object by a key named as the saveAs value.
+Scrapeteer will use what's defined in the query to fetch html tags, going one by one of the resulting list and get the value from each attribute requested in attrsToFetch. After that it will store everything that was found into an array of strings and save in the resulting object by a key named as the saveAs value.
 
 It goes by the sequence: `Fetch a tag by query -> Get values from Attributes -> Add to resulting object as defined`
 
-You execute the `async` method `.extractFromUrl` to extract the data from a url. An set of tag rules can used as a second parameter witch will be used stead of the default one.
+You execute the `async` method `.extractFromUrl` to extract the data from a url. A set of tag rules can be used as a second parameter which will be used stead of the default one.
 
 ```Javascript
 const withDefault = await scrapeteer.extractFromUrl('http://amazon.com') // Goes with default
 const withOnRequest = await scrapeteer.extractFromUrl('http://amazon.com', onRequestTagsConfig)
 ```
 
-The return will be an object with your scraped data. In case of no set of tag rules defined, the return will be a empty object.
+The return will be an object with your scraped data. In case of no set of tag rules defined, the return will be an empty object.
 
 ```javascript
 {
-  "title": [
-    "Here it comes an result",
-    "here it comes another result",
-  ],
-  "image": [
-    "http://imagine_a_image_here.png",
-    "http://imagine_another_image_here.png",
-    "http://imagine_one_more_image_here.png",
-  ],
-  "author": [] // empty array means no data was extracted from this set of tag rules
+ "title": [
+   "Here it comes an result",
+   "here it comes another result",
+ ],
+ "image": [
+   "http://imagine_a_image_here.png",
+   "http://imagine_another_image_here.png",
+   "http://imagine_one_more_image_here.png",
+ ],
+ "author": [] // empty array means no data was extracted from this set of tag rules
 }
 ```
 
