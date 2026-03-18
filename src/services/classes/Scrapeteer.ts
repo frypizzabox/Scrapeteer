@@ -35,7 +35,7 @@ export class Scrapeteer {
     await page.setRequestInterception(true)
 
     page.on('request', (request: any) => {
-      if ([...this.notLoad].indexOf(request.resourceType()) !== -1) request.abort()
+      if (this.notLoad.indexOf(request.resourceType()) !== -1) request.abort()
       else request.continue()
     })
 
