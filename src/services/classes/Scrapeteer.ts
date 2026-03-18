@@ -1,17 +1,27 @@
 import * as puppeteer from 'puppeteer'
-import { selector, extraction } from '../types/selectors'
+import { selector, extraction } from '../types'
+import { Resources } from '../enums'
 
 export class Scrapeteer {
   protected defaultSelector: selector[]
+  protected notLoad: Resources[]
   protected browser: any
   protected page: any
 
-  constructor(querySelector: selector[] = []) {
+  constructor(
+    querySelector: selector[] = [],
+    notLoad: Resources[] = [Resources.image, Resources.stylesheet, Resources.font, Resources.script]
+  ) {
     this.defaultSelector = querySelector
+    this.notLoad = notLoad
   }
 
-  async start(): Promise<void> {
+  async launch(): Promise<void> {
     this.browser = await puppeteer.launch()
+  }
+
+  setDefaultSelector(defaultSelector: selector[]) {
+    this.defaultSelector = defaultSelector
   }
 
   async extractFromUrl(
@@ -25,11 +35,8 @@ export class Scrapeteer {
     await page.setRequestInterception(true)
 
     page.on('request', (request: any) => {
-      if (['image', 'stylesheet', 'font', 'script'].indexOf(request.resourceType()) !== -1) {
-        request.abort()
-      } else {
-        request.continue()
-      }
+      if ([...this.notLoad].indexOf(request.resourceType()) !== -1) request.abort()
+      else request.continue()
     })
 
     await page.goto(url)

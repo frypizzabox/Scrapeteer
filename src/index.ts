@@ -1,2 +1,2 @@
-import { Scrapeteer } from './classes/Scrapeteer'
+import { Scrapeteer } from './services/classes/Scrapeteer'
 export default Scrapeteer
