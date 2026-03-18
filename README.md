@@ -1,123 +1,149 @@
 # Scrapeteer
 
-Scrapeteer is a NodeJS library for web-scraping using [Puppeteer](https://www.npmjs.com/package/puppeteer).
+A declarative web scraping library for Node.js, powered by [Puppeteer](https://pptr.dev/).
+
+Define CSS selectors, specify which attributes to extract, and get structured data back — no manual DOM traversal required.
+
+> **Note:** This project was originally built in 2022 and has recently been modernized with updated dependencies and improved type safety. More updates and features are on the way.
 
 ## Installation
-
-Use the package manager [npm](https://www.npmjs.com/) to install Scrapeteer.
 
 ```bash
 npm install scrapeteer
 ```
 
-## Usage
+## Quick Start
 
-Scrapeteer will extract data from an web-page using an array of objects where which one will represent rules of how to fetch and store data in the returning object.
-
-```javascript
+```typescript
 import Scrapeteer from 'scrapeteer';
 
-const defaultTagsConfig = [
+const scraper = new Scrapeteer([
   {
-    saveAs: 'title',
-    query: 'title',
-    attrsToFetch: ['innerHTML'],
+    saveAs: 'titles',
+    query: 'h1',
+    attrsToFetch: ['innerText'],
   },
-];
+]);
 
-const onRequestTagsConfig = [
-  {
-    saveAs: 'title',
-    query: 'title',
-    attrsToFetch: ['innerHTML'],
-  },
-  {
-    saveAs: 'image',
-    query: 'meta[name="og:image"], meta[property="og:image"]',
-    attrsToFetch: ['content'],
-  },
-];
+const data = await scraper.launch();
+const result = await scraper.extractFromUrl('https://example.com');
+console.log(result);
+// { titles: ['Example Domain'] }
 
-const scrapeteer = new Scrapeteer(defaultTagsConfig);
-
-(async () => {
-  await scrapeteer.launch();
-
-  const withDefault = await scrapeteer.extractFromUrl('http://amazon.com');
-  const withOnRequest = await scrapeteer.extractFromUrl(
-    'http://amazon.com',
-    onRequestTagsConfig
-  );
-
-  console.log('With default tags config: ', withDefault);
-  console.log('With OnRequest tags config: ', withOnRequest);
-})();
+await scraper.close();
 ```
 
-To prepare Scrapeteer for use is necessary to follow a sequence of steps:
+## How It Works
 
-1. Load Scrapeteer Class.
-2. Instantiate it. Is possible to set predefined tag rules here, but is optional.
-3. Call the `async` method `.start()` which will load puppeteer with optimized settings.
+Scrapeteer uses a **selector configuration** to define what to extract from a page:
 
-### Tags Config:
-
-```javascript
-const tagsConfig = [
+```typescript
+const selectors = [
   {
     saveAs: 'title',
-    query: 'meta[name="og:title"], meta[property="og:title"]',
+    query: 'meta[property="og:title"]',
     attrsToFetch: ['content'],
   },
   {
-    saveAs: 'image',
-    query: 'meta[name="og:image"], meta[property="og:image"]',
+    saveAs: 'images',
+    query: 'meta[property="og:image"]',
     attrsToFetch: ['content'],
   },
 ];
 ```
 
-An object with tag rules are defined by three parameters:
+Each selector has three properties:
 
-1. **saveAs:** A string that represents the key in the returning object.
+| Property | Description |
+|----------|-------------|
+| `saveAs` | Key name in the returned object |
+| `query` | CSS selector passed to `document.querySelectorAll` |
+| `attrsToFetch` | Array of DOM attributes to extract from each matched element |
 
-2. **query:** A string that will be used in a [document.querySelectorAll](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll) during the scraping.
+The extraction flow: **query the DOM** → **read attributes from each match** → **collect into an array under `saveAs`**
 
-3. **attrsToFetch:** A array containing all the attributes to fetch from the html tags resulting from the query.
+## API
 
-Scrapeteer will use what's defined in the query to fetch html tags, going one by one of the resulting list and get the value from each attribute requested in attrsToFetch. After that it will store everything that was found into an array of strings and save in the resulting object by a key named as the saveAs value.
+### `new Scrapeteer(defaultSelectors?, defaultSkipResources?)`
 
-It goes by the sequence: `Fetch a tag by query -> Get values from Attributes -> Add to resulting object as defined`
+Create a new instance. Both parameters are optional.
 
-You execute the `async` method `.extractFromUrl` to extract the data from a url. A set of tag rules can be used as a second parameter which will be used stead of the default one.
+- `defaultSelectors` — array of selector configs used by default in `extractFromUrl`
+- `defaultSkipResources` — resource types to block (defaults to `image`, `stylesheet`, `font`, `script` for faster scraping)
 
-```Javascript
-const withDefault = await scrapeteer.extractFromUrl('http://amazon.com') // Goes with default
-const withOnRequest = await scrapeteer.extractFromUrl('http://amazon.com', onRequestTagsConfig)
+### `.launch()`
+
+Starts the headless browser. Must be called before extracting.
+
+### `.extractFromUrl(url, selectors?, skipResources?)`
+
+Extracts data from a URL. Returns an object where each key (defined by `saveAs`) maps to an array of extracted strings.
+
+```typescript
+const result = await scraper.extractFromUrl('https://example.com');
+// { title: ['Example Domain'], images: [] }
 ```
 
-The return will be an object with your scraped data. In case of no set of tag rules defined, the return will be an empty object.
+Override default selectors or skip resources per-call:
 
-```javascript
+```typescript
+const result = await scraper.extractFromUrl(
+  'https://example.com',
+  customSelectors,
+  [Resources.image] // only block images
+);
+```
+
+### `.setDefaultSelector(selectors)`
+
+Update the default selectors after instantiation.
+
+### `.setDefaultSkipResources(resources?)`
+
+Update which resource types to block.
+
+### `.close()`
+
+Closes the browser instance. Always call this when done to avoid memory leaks.
+
+## Resource Blocking
+
+By default, Scrapeteer blocks unnecessary resources to speed up page loads:
+
+```typescript
+import { Resources } from 'scrapeteer';
+
+// Available resources to block:
+Resources.image
+Resources.stylesheet
+Resources.font
+Resources.script
+```
+
+## Example Output
+
+```json
 {
- "title": [
-   "Here it comes an result",
-   "here it comes another result",
- ],
- "image": [
-   "http://imagine_a_image_here.png",
-   "http://imagine_another_image_here.png",
-   "http://imagine_one_more_image_here.png",
- ],
- "author": [] // empty array means no data was extracted from this set of tag rules
+  "title": ["Page Title"],
+  "images": [
+    "https://example.com/image1.png",
+    "https://example.com/image2.png"
+  ],
+  "author": []
 }
 ```
+
+Empty arrays indicate no data matched that selector's rules.
+
+## Tech Stack
+
+- **TypeScript** with strict mode
+- **Puppeteer** 24.x (headless Chromium)
+- **Node.js** (CommonJS)
 
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
 
 ## License
 
