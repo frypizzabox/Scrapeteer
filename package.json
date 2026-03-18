@@ -1,0 +1,33 @@
+{
+  "name": "scrapeteer",
+  "version": "1.0.0",
+  "description": "A web scraper based on puppeteer.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frypizzabox/Scrapeteer.git"
+  },
+  "keywords": [
+    "scraper",
+    "web",
+    "page",
+    "puppeteer"
+  ],
+  "author": "Adalberto Aucar Kutuxidis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/frypizzabox/Scrapeteer/issues"
+  },
+  "homepage": "https://github.com/frypizzabox/Scrapeteer#readme",
+  "dependencies": {
+    "puppeteer": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^14.6.0",
+    "@types/puppeteer": "^3.0.1",
+    "typescript": "^3.9.7"
+  }
+}
