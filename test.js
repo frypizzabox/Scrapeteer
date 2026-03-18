@@ -34,4 +34,6 @@ const scrapeteer = new Scrapeteer(defaultTagsConfig);
 
   console.log('With default tags config: ', withDefault);
   console.log('With OnRequest tags config: ', withOnRequest);
+
+  await scrapeteer.close();
 })();

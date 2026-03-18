@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "ES2022",
     "module": "commonjs",
     "declaration": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "removeComments": true,
     "strict": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "exclude": ["./node_modules", "./dist"]
 }
