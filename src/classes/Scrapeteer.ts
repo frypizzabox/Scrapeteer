@@ -6,7 +6,7 @@ export class Scrapeteer {
   protected browser: any
   protected page: any
 
-  constructor(querySelector: selector[]) {
+  constructor(querySelector: selector[] = []) {
     this.defaultSelector = querySelector
   }
 
@@ -18,6 +18,8 @@ export class Scrapeteer {
     url: string,
     selectorList: selector[] = this.defaultSelector
   ): Promise<extraction> {
+    if (!selectorList.length) return {}
+
     const page = await this.browser.newPage()
 
     await page.setRequestInterception(true)
